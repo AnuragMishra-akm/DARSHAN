@@ -10,8 +10,8 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.GlobalContext.startKoin
 
 class DarshanVideoCallingApp: Application() {
-    private var currentName: String?=null
-    var client : StreamVideo?=null
+    private var currentName: String? = null
+    var client: StreamVideo? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -21,19 +21,24 @@ class DarshanVideoCallingApp: Application() {
         }
     }
 
-    fun initVideoClient(userName: String){
-        if(client == null || currentName != userName){
+    fun initVideoClient(userName: String) {
+        // Sanitize userId: only letters, digits, @, _, and - are allowed in Stream IDs
+        val userId = userName.filter { it.isLetterOrDigit() || it == '@' || it == '_' || it == '-' }
+            .ifEmpty { "user_${System.currentTimeMillis()}" }
+
+        if (client == null || currentName != userName) {
             StreamVideo.removeClient()
             currentName = userName
+            
             client = StreamVideoBuilder(
                 context = this,
                 apiKey = "qk5n36xpvdsz",
                 user = User(
-                    id = userName,
+                    id = userId,
                     name = userName,
-                    type= UserType.Guest
+                    type = UserType.Authenticated
                 ),
-                token = StreamVideo.devToken(userName)
+                token = StreamVideo.devToken(userId)
             ).build()
         }
     }
