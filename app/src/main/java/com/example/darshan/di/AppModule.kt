@@ -4,6 +4,7 @@ import com.example.darshan.DarshanVideoCallingApp
 import com.example.darshan.connect.ConnectViewModel
 import com.example.darshan.video.VideoCallViewModel
 import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
@@ -14,6 +15,11 @@ val appModule = module {
     }
 
     viewModelOf(::ConnectViewModel)
-    viewModelOf(::VideoCallViewModel)
-
+    
+    viewModel { params ->
+        VideoCallViewModel(
+            videoClient = get(),
+            roomID = params.get()
+        )
+    }
 }

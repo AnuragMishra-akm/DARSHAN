@@ -29,18 +29,31 @@ fun ConnectScreen(
             modifier = Modifier.padding(8.dp)
         )
         Spacer(modifier = Modifier.height(8.dp))
-        Text("Choose A Name",fontSize = 18.sp)
+        Text("Choose A Name", fontSize = 18.sp)
         Spacer(modifier = Modifier.height(16.dp))
-            TextField(
-                value =state.name ?: "",
-                onValueChange = {
-                    onAction(ConnectAction.OnNameChange(it))
-                },
-                placeholder = {
-                    Text(text = "Name")
-                },
-                modifier = Modifier.fillMaxWidth()
-            )
+        TextField(
+            value = state.name ?: "",
+            onValueChange = {
+                onAction(ConnectAction.OnNameChange(it))
+            },
+            placeholder = {
+                Text(text = "Name")
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text("Enter Room ID", fontSize = 18.sp)
+        Spacer(modifier = Modifier.height(16.dp))
+        TextField(
+            value = state.roomID ?: "",
+            onValueChange = {
+                onAction(ConnectAction.OnRoomIDChange(it))
+            },
+            placeholder = {
+                Text(text = "Room ID")
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = {
             onAction(ConnectAction.OnConnectClick)

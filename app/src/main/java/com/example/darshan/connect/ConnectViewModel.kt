@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import com.example.darshan.DarshanVideoCallingApp
-import kotlinx.coroutines.flow.MutableStateFlow
 
 class ConnectViewModel(
   private val app: Application
@@ -22,13 +21,19 @@ class ConnectViewModel(
             is ConnectAction.OnNameChange -> {
                 state = state.copy(name = action.name)
             }
-
+            is ConnectAction.OnRoomIDChange -> {
+                state = state.copy(roomID = action.roomID)
+            }
         }
     }
     private fun connectToRoom(){
         state = state.copy(errorMessage = null)
         if(state.name?.isBlank() == true){
             state = state.copy(errorMessage = "Name cannot be empty")
+            return
+        }
+        if(state.roomID?.isBlank() == true){
+            state = state.copy(errorMessage = "Room ID cannot be empty")
             return
         }
         // initialize video client and connect to room
