@@ -2,6 +2,7 @@ package com.example.darshan.video
 
 import android.os.Build
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,8 +22,13 @@ import io.getstream.video.android.core.call.state.LeaveCall
 @Composable
 fun VideoCallScreen(
     state: VideoCallState,
-    onAction: (VideoCallAction) -> Unit
+    onAction: (VideoCallAction) -> Unit,
+    onBackPressed: () -> Unit
 ) {
+    BackHandler {
+        onBackPressed()
+    }
+    
     when{
         state.errorMessage != null -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
@@ -76,9 +82,7 @@ fun VideoCallScreen(
                     }
                     DefaultOnCallActionHandler.onCallAction(state.call,action)
                 },
-                onBackPressed = {
-                    onAction(VideoCallAction.OnDisConnectClick)
-                }
+                onBackPressed = onBackPressed
             )
         }
     }

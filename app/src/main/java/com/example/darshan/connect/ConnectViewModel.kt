@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import com.example.darshan.DarshanVideoCallingApp
+import java.util.UUID
 
 class ConnectViewModel(
   private val app: Application
@@ -24,8 +25,21 @@ class ConnectViewModel(
             is ConnectAction.OnRoomIDChange -> {
                 state = state.copy(roomID = action.roomID)
             }
+            is ConnectAction.OnModeChange -> {
+                state = state.copy(
+                    isCreateMode = action.isCreateMode,
+                    errorMessage = null,
+                    roomID = ""
+                )
+            }
+            ConnectAction.OnGenerateRoomID -> {
+                state = state.copy(
+                    roomID = UUID.randomUUID().toString().substring(0, 8)
+                )
+            }
         }
     }
+
     private fun connectToRoom(){
         state = state.copy(errorMessage = null)
         if(state.name?.isBlank() == true){
@@ -36,9 +50,8 @@ class ConnectViewModel(
             state = state.copy(errorMessage = "Room ID cannot be empty")
             return
         }
-        // initialize video client and connect to room
+        
         (app as DarshanVideoCallingApp).initVideoClient(state.name!!)
         state = state.copy(isConnected = true)
     }
-
 }

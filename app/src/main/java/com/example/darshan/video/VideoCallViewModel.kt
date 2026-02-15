@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.video.android.core.StreamVideo
+import io.getstream.video.android.core.call.state.LeaveCall
 import kotlinx.coroutines.launch
 
 class VideoCallViewModel(
@@ -17,31 +18,39 @@ class VideoCallViewModel(
     ))
     private set
 
+    init {
+        viewModelScope.launch {
+            state.call.subscribe { event ->
+                if (event is LeaveCall) {
+                    onAction(VideoCallAction.OnDisConnectClick)
+                }
+            }
+        }
+    }
+
     fun onAction(action: VideoCallAction){
         when(action){
             VideoCallAction.JoinCallClick -> {
                 joinCall()
             }
             VideoCallAction.OnDisConnectClick -> {
-               state.call.leave()
+                state.call.leave()
                 videoClient.logOut()
-                state = state.copy(callState = CallState.ENDED)
+                state = state.copy(callState = com.example.darshan.video.CallState.ENDED)
             }
         }
     }
 
     private fun joinCall(){
-        if(state.callState == CallState.ACTIVE){
+        if(state.callState == com.example.darshan.video.CallState.ACTIVE){
             return
         }
         viewModelScope.launch {
-            state = state.copy(callState = CallState.JOINING)
-            
-            // Simplified: Just join the call and create it if it doesn't exist.
-            // This avoids the 'queryCalls' overhead.
+            state = state.copy(callState = com.example.darshan.video.CallState.JOINING)
+
             state.call.join(create = true)
                 .onSuccess {
-                    state = state.copy(callState = CallState.ACTIVE, errorMessage = null)
+                    state = state.copy(callState = com.example.darshan.video.CallState.ACTIVE, errorMessage = null)
                 }
                 .onError{
                     state = state.copy(errorMessage = it.message, callState = null)
